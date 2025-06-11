@@ -1,0 +1,13 @@
+db_detection_and_setup:
+  description: >
+    Analyze the source code located at '{{ project_path }}' and detect which database the project uses.If it uses MySQL, PostgreSQL, or MongoDB:
+    - Automatically create a corresponding user in the IMCC DB server.
+    - Generate strong, secure credentials.
+    - Inject those credentials into the correct config file within the project (e.g., settings.py, config.js).
+  expected_output: >
+    1. Detected DB type
+    2. Created DB user
+    3. Injected credentials into appropriate config files (.env, settings.py, config.js)
+  input_variables:
+    - project_path
+  agent: db_inspector
