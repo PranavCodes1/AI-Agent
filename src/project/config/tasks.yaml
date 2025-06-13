@@ -1,13 +1,64 @@
-db_detection_and_setup:
+detect_database:
   description: >
-    Analyze the source code located at '{{ project_path }}' and detect which database the project uses.If it uses MySQL, PostgreSQL, or MongoDB:
-    - Automatically create a corresponding user in the IMCC DB server.
-    - Generate strong, secure credentials.
-    - Inject those credentials into the correct config file within the project (e.g., settings.py, config.js).
+    Analyze the source code located at {project_path} to detect which database 
+    the project uses (MySQL, PostgreSQL, or MongoDB). Use the detect_database tool
+    to scan through the project files and identify database patterns.
+    
+    If the database type is 'unknown', STOP here and report that no supported database was found.
+    Only proceed to credential generation if a valid database (mysql, postgresql, mongodb) is detected.
   expected_output: >
-    1. Detected DB type
-    2. Created DB user
-    3. Injected credentials into appropriate config files (.env, settings.py, config.js)
+    Database type detected:- mysql, postgresql, mongodb, or unknown.
+    If unknown, explain that no supported database patterns were found and the process cannot continue.
+  input_variables:
+    - project_path
+  agent: db_inspector
+
+generate_credentials:
+  description: >
+    This task should ONLY run if the previous task detected a valid database type (not 'unknown').
+    Generate secure database username and password for the detected database.
+    Use the generate_secure_credentials tool to create random, secure credentials.
+    
+    First check the context from the previous task to ensure a valid database was detected.
+    If the database type is 'unknown', do not generate credentials and report that the process cannot continue.
+  expected_output: >
+    Secure credentials generated in the format:- Username:[username], Password:[password]
+    Or if database type is unknown:- "Cannot generate credentials - no supported database detected"
+  agent: db_inspector
+
+create_db_user:
+  description: >
+    This task should ONLY run if valid credentials were generated in the previous task.
+    Create a database user in the local database instance using the generated credentials
+    and the database type from the detection task.
+    
+    Use the create_local_db_user_from_context tool which will automatically parse:-
+    1. The database type from the detect_database task output
+    2. The username and password from the generate_credentials task output
+    
+    Pass the context from both previous tasks to this tool. The tool will extract
+    the necessary information and create the database user.
+    
+    If you encounter MySQL connection errors, try setting the MYSQL_ROOT_PASSWORD environment variable
+    or ensure MySQL is running with proper root access.
+  expected_output: >
+    Database user creation status:- Success with username confirmation or detailed error message
+  agent: db_inspector
+
+inject_credentials:
+  description: >
+    This task should ONLY run if the database user was created successfully.
+    Inject the generated credentials into the project's .env file and configuration files 
+    (e.g., settings.py, config.js) located at {project_path}.
+    
+    Use the inject_credentials_from_context tool which will automatically parse:-
+    1. The database type from the detect_database task output
+    2. The username and password from the generate_credentials task output
+    
+    Pass the context from all previous tasks and the project_path to inject the credentials
+    into the appropriate configuration files.
+  expected_output: >
+    Credentials injection status:- Success confirmation with details of files modified
   input_variables:
     - project_path
   agent: db_inspector
