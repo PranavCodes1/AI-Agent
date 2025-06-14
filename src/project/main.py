@@ -19,7 +19,7 @@ def run():
     Run the crew.
     """
     inputs = {
-        'project_path': '/home/pranav/imcc-project/AI-Agent/sample_project_mysql',
+        'project_path': '/home/vboxuser/imcc-project/AI-Agent/sample_project_mongodb',
         'current_year': str(datetime.now().year)
     }
     
@@ -38,7 +38,7 @@ def train():
         sys.exit(1)
         
     inputs = {
-        "project_path": "/home/pranav/imcc-project/AI-Agent/sample_project_mysql",
+        "project_path": "/home/vboxuser/imcc-project/AI-Agent/sample_project_mongodb",
         'current_year': str(datetime.now().year)
     }
     try:
@@ -70,7 +70,7 @@ def test():
         sys.exit(1)
         
     inputs = {
-        "project_path": "/home/pranav/imcc-project/AI-Agent/sample_project_mysql",
+        "project_path": "/home/vboxuser/imcc-project/AI-Agent/sample_project_mongodb",
         "current_year": str(datetime.now().year)
     }
     

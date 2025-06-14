@@ -3,8 +3,8 @@ import mysql.connector
 def connect():
     connection = mysql.connector.connect(
         host="localhost",
-        user="admin",
-        password="tester",
+        user="ai_admin",
+        password="AIagent123!",
         database="testdb"
     )
     return connection

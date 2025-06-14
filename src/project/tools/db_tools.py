@@ -62,11 +62,10 @@ def detect_database(project_path: str) -> str:
         return f"Error: Path does not exist - {project_path}"
     
     db_patterns = {
-        "mysql": re.compile(r"mysql\.|MySQL|pymysql|mysql-connector", re.IGNORECASE),
-        "postgresql": re.compile(r"psycopg2|postgresql|pg_", re.IGNORECASE),
-        "mongodb": re.compile(r"pymongo|mongodb", re.IGNORECASE),
-    }
-    
+    "mysql": re.compile(r"mysql\.|MySQL|pymysql|mysql-connector|MySQLdb", re.IGNORECASE),
+    "postgresql": re.compile(r"psycopg2|postgresql|pg_|postgres|PostgreSQL", re.IGNORECASE),
+    "mongodb": re.compile(r"pymongo|mongodb|mongo|MongoDB|MongoClient", re.IGNORECASE),
+}
     try:
         for root, _, files in os.walk(project_path):
             for file in files:
@@ -111,18 +110,18 @@ def get_db_connection_params(db_type: str):
         }
     elif db_type == "postgresql":
         return {
-            "host": os.getenv("POSTGRES_HOST", "localhost"),
+            "host": os.getenv("POSTGRES_HOST", "127.0.0.1"),
             "port": int(os.getenv("POSTGRES_PORT", "5432")),
-            "user": os.getenv("POSTGRES_ROOT_USER", "postgres"),
-            "password": os.getenv("POSTGRES_ROOT_PASSWORD", ""),
+            "user": os.getenv("POSTGRES_ROOT_USER", "ai_admin"),
+            "password": os.getenv("POSTGRES_ROOT_PASSWORD", "AIagent123!"),
             "dbname": os.getenv("POSTGRES_DB", "postgres")
         }
     elif db_type == "mongodb":
         return {
-            "host": os.getenv("MONGO_HOST", "localhost"),
+            "host": os.getenv("MONGO_HOST", "127.0.0.1"),
             "port": int(os.getenv("MONGO_PORT", "27017")),
-            "username": os.getenv("MONGO_ROOT_USER"),
-            "password": os.getenv("MONGO_ROOT_PASSWORD"),
+            "username": os.getenv("MONGO_ROOT_USER", "ai_admin"),
+            "password": os.getenv("MONGO_ROOT_PASSWORD", "AIagent123!"),
         }
     else:
         return {}
